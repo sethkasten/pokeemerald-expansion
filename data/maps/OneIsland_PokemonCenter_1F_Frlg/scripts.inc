@@ -26,9 +26,8 @@ OneIsland_PokemonCenter_1F_EventScript_SetNetworkMachineOn::
 
 OneIsland_PokemonCenter_1F_OnTransition::
 	setrespawn HEAL_LOCATION_ONE_ISLAND
+	setflag FLAG_HIDE_ONE_ISLAND_POKECENTER_BILL @ Mod: Bill is not part of this build's flow
 	call_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 6, OneIsland_PokemonCenter_1F_EventScript_SetCelioQuestDone
-	call_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 0, OneIsland_PokemonCenter_1F_EventScript_SetBillCelioFirstMeetingPos
-	call_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 2, OneIsland_PokemonCenter_1F_EventScript_SetBillCelioReadyToLeavePos
 	end
 
 OneIsland_PokemonCenter_1F_EventScript_SetCelioQuestDone::
@@ -50,7 +49,8 @@ OneIsland_PokemonCenter_1F_EventScript_SetBillCelioReadyToLeavePos::
 	return
 
 OneIsland_PokemonCenter_1F_OnFrame::
-	map_script_2 VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 0, OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene
+	@ Mod: the vanilla FRLG MeetCelioScene relied on Bill walking in with the player from Vermilion.
+	@ In this build the player arrives via Steven's Tri-Pass ferry, so there is no Bill and no cutscene.
 	.2byte 0
 
 OneIsland_PokemonCenter_1F_EventScript_MeetCelioScene::
@@ -198,20 +198,17 @@ OneIsland_PokemonCenter_1F_EventScript_BillGoTakeStroll::
 OneIsland_PokemonCenter_1F_EventScript_Celio::
 	lock
 	faceplayer
-	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 7, OneIsland_PokemonCenter_1F_EventScript_CelioGiveBillFact
+	@ Mod: state 7 ("quest completely finished, come back later") now returns the same thank-you as state 6.
+	@ The vanilla FRLG CelioGiveBillFact branch reused Bill fame-checker facts and is unreachable in this build.
+	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 7, OneIsland_PokemonCenter_1F_EventScript_CelioJustGivenSapphire
 	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 6, OneIsland_PokemonCenter_1F_EventScript_CelioJustGivenSapphire
 	goto_if_set FLAG_RECOVERED_SAPPHIRE, OneIsland_PokemonCenter_1F_EventScript_GiveCelioSapphire
 	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 5, OneIsland_PokemonCenter_1F_EventScript_ExplainRainbowPass
 	goto_if_set FLAG_GOT_RUBY, OneIsland_PokemonCenter_1F_EventScript_GiveCelioRuby
 	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 4, OneIsland_PokemonCenter_1F_EventScript_CelioWaitingForRuby
-	specialvar VAR_RESULT, IsNationalPokedexEnabled
-	goto_if_eq VAR_RESULT, TRUE, OneIsland_PokemonCenter_1F_EventScript_CelioRequestRuby
-	goto_if_eq VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 3, OneIsland_PokemonCenter_1F_EventScript_CelioPlayerMissingNationalDex
-	msgbox OneIsland_PokemonCenter_1F_Text_SorryForBeingPoorHost
-	closemessage
-	applymovement LOCALID_CELIO, Common_Movement_FaceOriginalDirection
-	waitmovement 0
-	release
+	@ Mod: skip the FRLG National-Dex gate. The player only reaches this island as Hoenn Champion via Steven's Tri-Pass,
+	@ so we always advance straight into the Ruby request on the first talk.
+	goto OneIsland_PokemonCenter_1F_EventScript_CelioRequestRuby
 	end
 
 OneIsland_PokemonCenter_1F_EventScript_CelioGiveBillFact::
@@ -272,12 +269,14 @@ OneIsland_PokemonCenter_1F_EventScript_GiveCelioSapphire::
 	applymovement LOCALID_CELIO, Common_Movement_FacePlayer
 	waitmovement 0
 	msgbox OneIsland_PokemonCenter_1F_Text_ManagedToLinkWithHoennThankYou
-	special SetPostgameFlags
-	setflag FLAG_IS_CHAMPION
+	@ Mod: strip FRLG postgame side effects that don't apply in this build.
+	@   - Removed `special SetPostgameFlags` (FRLG-only postgame bookkeeping).
+	@   - Removed `setflag FLAG_IS_CHAMPION` (that's Hoenn's champion flag; the player is already Hoenn Champion here).
+	@   - Removed `setflag FLAG_HIDE_LORELEI_IN_HER_HOUSE` (Lorelei's house isn't part of the flow).
+	@   - Removed `special InitRoamer` (would attempt to spawn a Kanto bird roamer with an uninitialised species arg).
 	setflag FLAG_HIDE_CERULEAN_CAVE_GUARD
-	setflag FLAG_HIDE_LORELEI_IN_HER_HOUSE
+	setflag FLAG_SEVII_DETOUR_FINISHED
 	setvar VAR_MAP_SCENE_ONE_ISLAND_POKEMON_CENTER_1F, 6
-	special InitRoamer
 	release
 	end
 

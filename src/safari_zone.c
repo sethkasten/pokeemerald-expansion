@@ -10,6 +10,7 @@
 #include "string_util.h"
 #include "tv.h"
 #include "constants/game_stat.h"
+#include "constants/region_map_sections.h"
 #include "field_screen_effect.h"
 
 struct PokeblockFeeder
@@ -30,6 +31,11 @@ extern const u8 SafariZone_EventScript_OutOfBalls[];
 
 EWRAM_DATA u8 gNumSafariBalls = 0;
 EWRAM_DATA u16 gSafariZoneStepCounter = 0;
+// Mod: Independent Kanto safari step budget. Ticks only while player is in a
+// Kanto safari map (MAPSEC_KANTO_SAFARI_ZONE); the Hoenn counter is paused
+// there and vice versa. Either counter reaching zero fires the same TimesUp
+// script that warps the player back to the Route 121 entrance.
+EWRAM_DATA u16 gSafariZoneStepCounterKanto = 0;
 EWRAM_DATA static u8 sSafariZoneCaughtMons = 0;
 EWRAM_DATA static u8 sSafariZonePkblkUses = 0;
 EWRAM_DATA static struct PokeblockFeeder sPokeblockFeeders[NUM_POKEBLOCK_FEEDERS] = {0};
@@ -58,10 +64,10 @@ void EnterSafariMode(void)
     SetSafariZoneFlag();
     ClearAllPokeblockFeeders();
     gNumSafariBalls = 30;
-    if (IS_FRLG)
-        gSafariZoneStepCounter = 600;
-    else
-        gSafariZoneStepCounter = 500;
+    // Mod: Initialize both counters. Hoenn (500) ticks in the Hoenn safari;
+    // Kanto (600) ticks in the FRLG safari. They run independently.
+    gSafariZoneStepCounter = 500;
+    gSafariZoneStepCounterKanto = 600;
     sSafariZoneCaughtMons = 0;
     sSafariZonePkblkUses = 0;
 }
@@ -73,6 +79,7 @@ void ExitSafariMode(void)
     ClearAllPokeblockFeeders();
     gNumSafariBalls = 0;
     gSafariZoneStepCounter = 0;
+    gSafariZoneStepCounterKanto = 0;
 }
 
 bool8 SafariZoneTakeStep(void)
@@ -83,11 +90,26 @@ bool8 SafariZoneTakeStep(void)
     }
 
     DecrementFeederStepCounters();
-    gSafariZoneStepCounter--;
-    if (gSafariZoneStepCounter == 0)
+    // Mod: Route the step tick to the region-appropriate counter. Kanto safari
+    // maps are tagged MAPSEC_KANTO_SAFARI_ZONE; everything else counts against
+    // the Hoenn budget.
+    if (gMapHeader.regionMapSectionId == MAPSEC_KANTO_SAFARI_ZONE)
     {
-        ScriptContext_SetupScript(SafariZone_EventScript_TimesUp);
-        return TRUE;
+        gSafariZoneStepCounterKanto--;
+        if (gSafariZoneStepCounterKanto == 0)
+        {
+            ScriptContext_SetupScript(SafariZone_EventScript_TimesUp);
+            return TRUE;
+        }
+    }
+    else
+    {
+        gSafariZoneStepCounter--;
+        if (gSafariZoneStepCounter == 0)
+        {
+            ScriptContext_SetupScript(SafariZone_EventScript_TimesUp);
+            return TRUE;
+        }
     }
     return FALSE;
 }

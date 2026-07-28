@@ -18,6 +18,16 @@ SafariZone_Center_EventScript_AreaSign::
 	msgbox SafariZone_Center_Text_CenterArea, MSGBOX_SIGN
 	end
 
+@ Mod: Warp pad returning the player to Emerald Safari Zone Northeast.
+SafariZone_Center_EventScript_WarpPadToHoenn::
+	lockall
+	playse SE_WARP_IN
+	waitse
+	warp MAP_SAFARI_ZONE_NORTHEAST, 32, 24
+	waitstate
+	releaseall
+	end
+
 SafariZone_Center_Text_RestHouse::
 	.string "REST HOUSE$"
 

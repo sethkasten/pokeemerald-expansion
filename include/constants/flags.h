@@ -51,19 +51,11 @@
 
 #else
 
-#define FLAG_UNUSED_0x020    0x20 // Unused Flag
-#define FLAG_UNUSED_0x021    0x21 // Unused Flag
-#define FLAG_UNUSED_0x022    0x22 // Unused Flag
-#define FLAG_UNUSED_0x023    0x23 // Unused Flag
-#define FLAG_UNUSED_0x024    0x24 // Unused Flag
-#define FLAG_UNUSED_0x025    0x25 // Unused Flag
-#define FLAG_UNUSED_0x026    0x26 // Unused Flag
-#define FLAG_UNUSED_0x027    0x27 // Unused Flag
-#define FLAG_UNUSED_0x028    0x28 // Unused Flag
-#define FLAG_UNUSED_0x029    0x29 // Unused Flag
-#define FLAG_UNUSED_0x02A    0x2A // Unused Flag
-#define FLAG_UNUSED_0x02B    0x2B // Unused Flag
-#define FLAG_UNUSED_0x02C    0x2C // Unused Flag
+#define FLAG_PURCHASED_DEVON_PORYGON    0x20 // Mod: purchased Porygon from Devon Corp virus-protection vendor
+#define FLAG_HIDE_LILYCOVE_BERRY_VENDOR    0x21
+#define FLAG_RECEIVED_STEVEN_TRI_PASS    0x22
+#define FLAG_CAUGHT_ROAMING_EON_MON    0x23 // Mod: postgame Latios/Latias roamer has been caught
+// 0x24-0x2C reserved for Sevii Islands / Celio sidequest — see the FRLG-aliases block further down.
 #define FLAG_UNUSED_0x02D    0x2D // Unused Flag
 #define FLAG_UNUSED_0x02E    0x2E // Unused Flag
 #define FLAG_UNUSED_0x02F    0x2F // Unused Flag
@@ -1387,13 +1379,16 @@
 #define FLAG_IS_CHAMPION                            (SYSTEM_FLAGS + 0x1F) // Seems to be related to linking.
 #define FLAG_NURSE_UNION_ROOM_REMINDER              (SYSTEM_FLAGS + 0x20)
 
-#define FLAG_UNUSED_0x881                           (SYSTEM_FLAGS + 0x21) // Unused Flag
-#define FLAG_UNUSED_0x882                           (SYSTEM_FLAGS + 0x22) // Unused Flag
-#define FLAG_UNUSED_0x883                           (SYSTEM_FLAGS + 0x23) // Unused Flag
-#define FLAG_UNUSED_0x884                           (SYSTEM_FLAGS + 0x24) // Unused Flag
-#define FLAG_UNUSED_0x885                           (SYSTEM_FLAGS + 0x25) // Unused Flag
-#define FLAG_UNUSED_0x886                           (SYSTEM_FLAGS + 0x26) // Unused Flag
-#define FLAG_UNUSED_0x887                           (SYSTEM_FLAGS + 0x27) // Unused Flag
+// FRLG Elite Four / Champion defeat flags — repurposed from unused slots so
+// the Kanto Indigo League runs as its own postgame rung in the Emerald build.
+#define FLAG_DEFEATED_LORELEI                       (SYSTEM_FLAGS + 0x21)
+#define FLAG_DEFEATED_BRUNO                         (SYSTEM_FLAGS + 0x22)
+#define FLAG_DEFEATED_AGATHA                        (SYSTEM_FLAGS + 0x23)
+#define FLAG_DEFEATED_LANCE                         (SYSTEM_FLAGS + 0x24)
+#define FLAG_DEFEATED_CHAMP                         (SYSTEM_FLAGS + 0x25)
+// One-shot reward flags for the first / second Champion victory.
+#define FLAG_KANTO_LEAGUE_UPGRADE_GIVEN             (SYSTEM_FLAGS + 0x26)
+#define FLAG_KANTO_LEAGUE_DUBIOUS_DISC_GIVEN        (SYSTEM_FLAGS + 0x27)
 
 #define FLAG_SYS_USE_FLASH                          (SYSTEM_FLAGS + 0x28)
 #define FLAG_SYS_USE_STRENGTH                       (SYSTEM_FLAGS + 0x29)
@@ -1715,7 +1710,7 @@
 #define FLAG_HIDE_VICTORY_ROAD_3F_BOULDER                  0
 #define FLAG_HIDE_OAK_IN_CHAMP_ROOM                        0
 #define FLAG_HIDE_GAME_CORNER_ROCKET                       0
-#define FLAG_HIDE_CERULEAN_CAVE_GUARD                      0
+#define FLAG_HIDE_CERULEAN_CAVE_GUARD                      0x2C // Mod: real slot — set when Celio finishes the network machine
 #define FLAG_HIDE_ZAPDOS                                   0
 #define FLAG_HIDE_TOWER_ROCKET_1                           0
 #define FLAG_HIDE_CELADON_ROCKETS                          0
@@ -1736,9 +1731,9 @@
 #define FLAG_HIDE_SAFFRON_FAN_CLUB_WOMAN                   0
 #define FLAG_HIDE_SAFFRON_FAN_CLUB_BEAUTY                  0
 #define FLAG_HIDE_MG_DELIVERYMEN                           0
-#define FLAG_HIDE_ONE_ISLAND_BILL                          0
-#define FLAG_HIDE_ONE_ISLAND_POKECENTER_BILL               0
-#define FLAG_HIDE_ONE_ISLAND_POKECENTER_CELIO              0
+#define FLAG_HIDE_ONE_ISLAND_BILL                          0x2A // Mod: real slot — Bill outside on One Island is permanently hidden
+#define FLAG_HIDE_ONE_ISLAND_POKECENTER_BILL               0x29 // Mod: real slot — Bill inside One Island PC is permanently hidden
+#define FLAG_HIDE_ONE_ISLAND_POKECENTER_CELIO              0x2B // Mod: real slot reserved (never set, so Celio is visible)
 #define FLAG_HIDE_TWO_ISLAND_GAME_CORNER_BIKER             0
 #define FLAG_HIDE_TWO_ISLAND_GAME_CORNER_LOSTELLE          0
 #define FLAG_HIDE_LOSTELLE_IN_HER_HOME                     0
@@ -2081,7 +2076,7 @@
 #define FLAG_TWO_ISLAND_SHOP_EXPANDED_1                  0
 #define FLAG_TWO_ISLAND_SHOP_EXPANDED_2                  0
 #define FLAG_TWO_ISLAND_SHOP_EXPANDED_3                  0
-#define FLAG_SEVII_DETOUR_FINISHED                       0
+#define FLAG_SEVII_DETOUR_FINISHED                       0x26 // Mod: real slot — Celio's network machine fully linked
 #define FLAG_VISITED_TWO_ISLAND                          0
 #define FLAG_RESCUED_LOSTELLE                            0
 #define FLAG_0x2A4                                       0
@@ -2120,8 +2115,8 @@
 #define FLAG_GOT_NEST_BALL_FROM_WATER_PATH_HOUSE_1       0
 #define FLAG_GOT_TOGEPI_EGG                              0
 #define FLAG_NO_ROOM_FOR_TOGEPI_EGG                      0
-#define FLAG_RECOVERED_SAPPHIRE                          0
-#define FLAG_GOT_RUBY                                    0
+#define FLAG_RECOVERED_SAPPHIRE                          0x25 // Mod: real slot — Sapphire recovered from Rocket Warehouse
+#define FLAG_GOT_RUBY                                    0x24 // Mod: real slot — Ruby recovered on Mt. Ember
 #define FLAG_TUTOR_FRENZY_PLANT                          0
 #define FLAG_TUTOR_BLAST_BURN                            0
 #define FLAG_TUTOR_HYDRO_CANNON                          0
@@ -2354,11 +2349,8 @@
 #define FLAG_DEFEATED_SABRINA         0
 #define FLAG_DEFEATED_BLAINE          0
 #define FLAG_DEFEATED_LEADER_GIOVANNI 0
-#define FLAG_DEFEATED_LORELEI         0
-#define FLAG_DEFEATED_BRUNO           0
-#define FLAG_DEFEATED_AGATHA          0
-#define FLAG_DEFEATED_LANCE           0
-#define FLAG_DEFEATED_CHAMP           0
+// FLAG_DEFEATED_LORELEI/BRUNO/AGATHA/LANCE/CHAMP are defined above with real
+// system-flag slots so the FRLG Elite Four can be run in the Emerald build.
 
 #define FLAG_0x82A                                                  0
 #define FLAG_0x82B                                                  0
@@ -2376,8 +2368,8 @@
 #define FLAG_0x83D                                                  0
 #define FLAG_OPENED_START_MENU                                      0
 #define FLAG_SYS_PC_STORAGE_DISABLED                                0
-#define FLAG_SYS_SEVII_MAP_123                                      0
-#define FLAG_SYS_SEVII_MAP_4567                                     0
+#define FLAG_SYS_SEVII_MAP_123                                      0x27 // Mod: real slot — Town Map shows Sevii isles 1-3
+#define FLAG_SYS_SEVII_MAP_4567                                     0x28 // Mod: real slot — Town Map shows Sevii isles 4-7
 #define FLAG_SYS_GOT_BERRY_POUCH                                    0
 #define FLAG_SYS_UNLOCKED_TANOBY_RUINS                              0
 

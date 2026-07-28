@@ -258,6 +258,13 @@
       "elevation": 0,
       "dest_map": "MAP_FIERY_PATH",
       "dest_warp_id": "1"
+    },
+    {
+      "x": 5,
+      "y": 15,
+      "elevation": 0,
+      "dest_map": "MAP_DIGLETTS_CAVE_NORTH_ENTRANCE",
+      "dest_warp_id": "1"
     }
   ],
   "coord_events": [],

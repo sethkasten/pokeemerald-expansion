@@ -5695,7 +5695,12 @@ static void ReturnFromBattleToOverworld(void)
         if ((gBattleOutcome == B_OUTCOME_WON) || gBattleOutcome == B_OUTCOME_CAUGHT ||
             gBattleOutcome == B_OUTCOME_DREW)
 #endif
+        {
+            // Mod: mark the roamer as caught so Norman can hand out the Eon Ticket.
+            if (gBattleOutcome == B_OUTCOME_CAUGHT)
+                FlagSet(FLAG_CAUGHT_ROAMING_EON_MON);
             SetRoamerInactive(gEncounteredRoamerIndex);
+        }
     }
 
     m4aSongNumStop(SE_LOW_HEALTH);

@@ -3,6 +3,7 @@
 
 extern u8 gNumSafariBalls;
 extern u16 gSafariZoneStepCounter;
+extern u16 gSafariZoneStepCounterKanto;
 
 bool32 GetSafariZoneFlag(void);
 void SetSafariZoneFlag(void);

@@ -50,49 +50,52 @@ PokemonLeague_ChampionsRoom_EventScript_EnterRoom::
 	applymovement LOCALID_PLAYER, PokemonLeague_ChampionsRoom_Movement_PlayerEnter
 	waitmovement 0
 	delay 20
-	call_if_unset FLAG_SYS_GAME_CLEAR, PokemonLeague_ChampionsRoom_EventScript_Intro
-	call_if_set FLAG_SYS_GAME_CLEAR, PokemonLeague_ChampionsRoom_EventScript_RematchIntro
+	call_if_unset FLAG_DEFEATED_CHAMP, PokemonLeague_ChampionsRoom_EventScript_Intro
+	call_if_set FLAG_DEFEATED_CHAMP, PokemonLeague_ChampionsRoom_EventScript_RematchIntro
 	setflag FLAG_TEMP_3
 	setflag FLAG_TEMP_5
 	savebgm MUS_VICTORY_GYM_LEADER
-	call_if_unset FLAG_IS_CHAMPION, PokemonLeague_ChampionsRoom_EventScript_Battle
-	call_if_set FLAG_IS_CHAMPION, PokemonLeague_ChampionsRoom_EventScript_Rematch
+	call_if_unset FLAG_DEFEATED_CHAMP, PokemonLeague_ChampionsRoom_EventScript_Battle
+	call_if_set FLAG_DEFEATED_CHAMP, PokemonLeague_ChampionsRoom_EventScript_Rematch
 	setflag FLAG_TEMP_4
 	clearflag FLAG_TEMP_5
-	setflag FLAG_DEFEATED_CHAMP
-	setflag FLAG_TEMP_4
 	msgbox PokemonLeague_ChampionsRoom_Text_PostBattle
-	playbgm MUS_RG_SLOW_PALLET, 0
-	addobject LOCALID_CHAMPIONS_ROOM_PROF_OAK
-	msgbox PokemonLeague_ChampionsRoom_Text_OakPlayer
 	closemessage
-	applymovement LOCALID_PLAYER, PokemonLeague_ChampionsRoom_Movement_PlayerWatchOakEnter
-	applymovement LOCALID_KANTO_CHAMPIONS_ROOM_RIVAL, PokemonLeague_ChampionsRoom_Movement_RivalWatchOakEnter
-	applymovement LOCALID_CHAMPIONS_ROOM_PROF_OAK, PokemonLeague_ChampionsRoom_Movement_OakEnter
-	waitmovement 0
-	delay 25
-	specialvar VAR_RESULT, GetStarterPokemon
-	bufferspeciesname STR_VAR_1, VAR_RESULT
-	msgbox PokemonLeague_ChampionsRoom_Text_OakCongratulations
-	applymovement LOCALID_CHAMPIONS_ROOM_PROF_OAK, Common_Movement_WalkInPlaceFasterRight
-	applymovement LOCALID_KANTO_CHAMPIONS_ROOM_RIVAL, Common_Movement_WalkInPlaceFasterLeft
-	waitmovement 0
-	msgbox PokemonLeague_ChampionsRoom_Text_OakImDisappointedRival
+	playbgm MUS_HEAL, 0
+	special HealPlayerParty
+	waitstate
+	delay 40
+	playbgm MUS_RG_ENDING, 0
+	msgbox PokemonLeague_ChampionsRoom_Text_TwoIslandSabbaticalCongrats
 	closemessage
-	applymovement LOCALID_CHAMPIONS_ROOM_PROF_OAK, Common_Movement_WalkInPlaceFasterDown
-	waitmovement 0
-	delay 20
-	msgbox PokemonLeague_ChampionsRoom_Text_OakPlayerComeWithMe
+	call_if_unset FLAG_KANTO_LEAGUE_UPGRADE_GIVEN, PokemonLeague_ChampionsRoom_EventScript_GiveUpgrade
+	call_if_set FLAG_KANTO_LEAGUE_UPGRADE_GIVEN, PokemonLeague_ChampionsRoom_EventScript_CheckSecondReward
+	setflag FLAG_DEFEATED_CHAMP
 	closemessage
-	delay 13
-	applymovement LOCALID_CHAMPIONS_ROOM_PROF_OAK, PokemonLeague_ChampionsRoom_Movement_OakExit
-	applymovement LOCALID_PLAYER, PokemonLeague_ChampionsRoom_Movement_PlayerExit
-	waitmovement 0
 	setvar VAR_TEMP_1, 1
-	warp MAP_POKEMON_LEAGUE_HALL_OF_FAME, 5, 12
+	warp MAP_INDIGO_PLATEAU_POKEMON_CENTER_1F, 11, 15
 	waitstate
 	releaseall
 	end
+
+PokemonLeague_ChampionsRoom_EventScript_GiveUpgrade::
+	msgbox PokemonLeague_ChampionsRoom_Text_FirstRewardIntro
+	giveitem ITEM_UPGRADE
+	setflag FLAG_KANTO_LEAGUE_UPGRADE_GIVEN
+	msgbox PokemonLeague_ChampionsRoom_Text_ReturnForRematch
+	return
+
+PokemonLeague_ChampionsRoom_EventScript_CheckSecondReward::
+	goto_if_set FLAG_KANTO_LEAGUE_DUBIOUS_DISC_GIVEN, PokemonLeague_ChampionsRoom_EventScript_ThirdOrLater
+	msgbox PokemonLeague_ChampionsRoom_Text_SecondRewardIntro
+	giveitem ITEM_DUBIOUS_DISC
+	setflag FLAG_KANTO_LEAGUE_DUBIOUS_DISC_GIVEN
+	msgbox PokemonLeague_ChampionsRoom_Text_KeepChampioning
+	return
+
+PokemonLeague_ChampionsRoom_EventScript_ThirdOrLater::
+	msgbox PokemonLeague_ChampionsRoom_Text_KeepChampioning
+	return
 
 PokemonLeague_ChampionsRoom_EventScript_QuestLogEnd::
 	call PokemonLeague_ChampionsRoom_EventScript_StopSceneTrigger
@@ -324,4 +327,40 @@ PokemonLeague_ChampionsRoom_Text_OakPlayerComeWithMe::
 	.string "POKéMON is marvelous.\p"
 	.string "{PLAYER}!\n"
 	.string "Come with me!$"
+
+PokemonLeague_ChampionsRoom_Text_TwoIslandSabbaticalCongrats::
+	.string "{RIVAL}: Would you look at that…\p"
+	.string "You marched into KANTO on a\n"
+	.string "TWO ISLAND SABBATICAL and toppled\l"
+	.string "the INDIGO LEAGUE in one go.\p"
+	.string "Rest a moment, {PLAYER}.\n"
+	.string "Your POKéMON have been healed.$"
+
+PokemonLeague_ChampionsRoom_Text_FirstRewardIntro::
+	.string "{RIVAL}: On behalf of the LEAGUE,\n"
+	.string "accept this - a reward for your\l"
+	.string "first triumph over the ELITE FOUR\l"
+	.string "and their CHAMPION.$"
+
+PokemonLeague_ChampionsRoom_Text_ReturnForRematch::
+	.string "{RIVAL}: They say certain POKéMON\n"
+	.string "evolve when they hold it.\p"
+	.string "When you're hungry for a sterner\n"
+	.string "test, return to this hall.\p"
+	.string "The ELITE FOUR and I will be\n"
+	.string "waiting with a far greater\l"
+	.string "challenge!$"
+
+PokemonLeague_ChampionsRoom_Text_SecondRewardIntro::
+	.string "{RIVAL}: Impressive as ever, {PLAYER}!\p"
+	.string "For besting our rematch, the\n"
+	.string "LEAGUE offers you this curious\l"
+	.string "artifact.$"
+
+PokemonLeague_ChampionsRoom_Text_KeepChampioning::
+	.string "{RIVAL}: The INDIGO LEAGUE honors\n"
+	.string "your continued dominion.\p"
+	.string "Rest, then challenge us again\n"
+	.string "whenever the sabbatical calls\l"
+	.string "you back.$"
 

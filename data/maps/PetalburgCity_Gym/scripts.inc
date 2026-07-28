@@ -330,8 +330,26 @@ PetalburgCity_Gym_EventScript_NormanPostBattle::
 	call PetalburgCity_Gym_EventScript_ShouldGiveEnigmaBerry
 	goto_if_eq VAR_RESULT, TRUE, PetalburgCity_Gym_EventScript_GiveEnigmaBerry
 	goto_if_unset FLAG_RECEIVED_TM_FACADE, PetalburgCity_Gym_EventScript_GiveFacade2
+	call PetalburgCity_Gym_EventScript_ShouldGiveEonTicket
+	goto_if_eq VAR_RESULT, TRUE, PetalburgCity_Gym_EventScript_GiveEonTicket
 	goto_if_set FLAG_SYS_GAME_CLEAR, PetalburgCity_Gym_EventScript_NoAmountOfTrainingIsEnough
 	msgbox PetalburgCity_Gym_Text_DadGoingToKeepTraining, MSGBOX_DEFAULT
+	release
+	end
+
+PetalburgCity_Gym_EventScript_ShouldGiveEonTicket::
+	setvar VAR_RESULT, FALSE
+	goto_if_unset FLAG_CAUGHT_ROAMING_EON_MON, Common_EventScript_NopReturn
+	goto_if_set FLAG_ENABLE_SHIP_SOUTHERN_ISLAND, Common_EventScript_NopReturn
+	setvar VAR_RESULT, TRUE
+	return
+
+PetalburgCity_Gym_EventScript_GiveEonTicket::
+	msgbox PetalburgCity_Gym_Text_NormanEonTicketIntro, MSGBOX_DEFAULT
+	giveitem ITEM_EON_TICKET
+	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_BagIsFull
+	setflag FLAG_ENABLE_SHIP_SOUTHERN_ISLAND
+	msgbox PetalburgCity_Gym_Text_NormanEonTicketTryLilycove, MSGBOX_DEFAULT
 	release
 	end
 
@@ -1317,6 +1335,25 @@ PetalburgCity_Gym_Text_DadGoingToKeepTraining:
 	.string "my training.\p"
 	.string "It would bother me as a TRAINER to\n"
 	.string "not avenge my loss to you, {PLAYER}!$"
+
+PetalburgCity_Gym_Text_NormanEonTicketIntro:
+	.string "DAD: {PLAYER}! I heard the news--\n"
+	.string "you caught that mysterious POKéMON\l"
+	.string "that was roaming HOENN!\p"
+	.string "As it happens, an old friend of mine\n"
+	.string "sent me a curious ticket some time\l"
+	.string "ago and asked me to pass it along\l"
+	.string "to a TRAINER worthy of it.\p"
+	.string "I can't think of anyone more\n"
+	.string "deserving than you.$"
+
+PetalburgCity_Gym_Text_NormanEonTicketTryLilycove:
+	.string "DAD: They say the ticket will take\n"
+	.string "you to a small island far to the\l"
+	.string "south of HOENN.\p"
+	.string "Try showing it at the LILYCOVE\n"
+	.string "harbor. The S.S. TIDAL should be\l"
+	.string "able to ferry you there.$"
 
 PetalburgCity_Gym_Text_DadNoAmountOfTrainingIsEnough:
 	.string "DAD: {PLAYER}, how are things going?\p"

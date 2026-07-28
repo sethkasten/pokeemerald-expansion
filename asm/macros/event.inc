@@ -1292,6 +1292,15 @@
 	.4byte \products
 	.endm
 
+	@ Opens the Pokemart system with a parallel list of custom prices.
+	@ products is a list of .2byte items terminated by ITEM_NONE (with .align 2).
+	@ prices is a list of .4byte u32 prices in the same order (with .align 2).
+	.macro pokemartpriced products:req, prices:req
+	.byte SCR_OP_POKEMART_PRICED
+	.4byte \products
+	.4byte \prices
+	.endm
+
 	@ Used as the endpoint for a Pokemart item list
 	.macro pokemartlistend
 	.2byte ITEM_NONE

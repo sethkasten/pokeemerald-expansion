@@ -5,6 +5,7 @@ OneIsland_Frlg_MapScripts::
 
 OneIsland_OnTransition::
 	setworldmapflag FLAG_WORLD_MAP_ONE_ISLAND
+	setflag FLAG_HIDE_ONE_ISLAND_BILL @ Mod: no Bill in this build — keep the outdoor object hidden
 	end
 
 OneIsland_OnFrame::

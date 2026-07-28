@@ -50,22 +50,22 @@
       "x": 3,
       "y": 9,
       "elevation": 3,
-      "dest_map": "MAP_SAFARI_ZONE_CENTER",
-      "dest_warp_id": "12"
+      "dest_map": "MAP_ROUTE121_SAFARI_ZONE_ENTRANCE",
+      "dest_warp_id": "4"
     },
     {
       "x": 4,
       "y": 9,
       "elevation": 3,
-      "dest_map": "MAP_SAFARI_ZONE_CENTER",
-      "dest_warp_id": "12"
+      "dest_map": "MAP_ROUTE121_SAFARI_ZONE_ENTRANCE",
+      "dest_warp_id": "4"
     },
     {
       "x": 5,
       "y": 9,
       "elevation": 3,
-      "dest_map": "MAP_SAFARI_ZONE_CENTER",
-      "dest_warp_id": "12"
+      "dest_map": "MAP_ROUTE121_SAFARI_ZONE_ENTRANCE",
+      "dest_warp_id": "4"
     }
   ],
   "coord_events": [],

@@ -620,6 +620,13 @@
       "elevation": 1,
       "dest_map": "MAP_SCORCHED_SLAB",
       "dest_warp_id": "0"
+    },
+    {
+      "x": 5,
+      "y": 10,
+      "elevation": 0,
+      "dest_map": "MAP_ROCK_TUNNEL_1F",
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [

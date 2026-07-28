@@ -492,6 +492,25 @@ u32 ScriptGiveMon(enum Species species, u8 level, enum Item item)
     return GiveScriptedMonToPlayer(&mon, PARTY_SIZE);
 }
 
+// Mod: Creates a mon and always sends it directly to the PC, bypassing the party.
+// Reads species from gSpecialVar_0x8004 and level from gSpecialVar_0x8005.
+// Sets gSpecialVar_Result to MON_GIVEN_TO_PC on success or MON_CANT_GIVE if all PC boxes are full.
+u32 ScriptGiveMonToPC(void)
+{
+    struct Pokemon mon;
+    u32 sentToPc;
+
+    CreateRandomMon(&mon, gSpecialVar_0x8004, gSpecialVar_0x8005);
+    sentToPc = CopyMonToPC(&mon);
+    if (sentToPc != MON_CANT_GIVE)
+    {
+        HandleSetPokedexFlagFromMon(&mon, FLAG_SET_SEEN);
+        HandleSetPokedexFlagFromMon(&mon, FLAG_SET_CAUGHT);
+    }
+    gSpecialVar_Result = sentToPc;
+    return sentToPc;
+}
+
 #define PARSE_FLAG(n, default_) (flags & (1 << (n))) ? VarGet(ScriptReadHalfword(ctx)) : (default_)
 
 /* Give or create a mon to either player or opponent

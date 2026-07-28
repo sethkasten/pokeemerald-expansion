@@ -9,6 +9,12 @@ LilycoveCity_OnTransition:
 	setflag FLAG_HIDE_LILYCOVE_CONTEST_HALL_REPORTER
 	call_if_set FLAG_SYS_WEATHER_CTRL, Common_EventScript_SetAbnormalWeather
 	call Common_EventScript_SetupRivalGfxId
+	goto_if_set FLAG_IS_CHAMPION, LilycoveCity_EventScript_ShowBerryVendor
+	setflag FLAG_HIDE_LILYCOVE_BERRY_VENDOR
+	end
+
+LilycoveCity_EventScript_ShowBerryVendor::
+	clearflag FLAG_HIDE_LILYCOVE_BERRY_VENDOR
 	end
 
 LilycoveCity_OnLoad:
@@ -754,3 +760,187 @@ LilycoveCity_Text_HoneymoonVowToSeeRarePokemon:
 	.string "POKéMON as soon as we arrived.\p"
 	.string "I mean, we are totally happy!$"
 
+
+LilycoveCity_EventScript_BerryVendor::
+	lock
+	faceplayer
+	message LilycoveCity_Text_BerryVendorGreeting
+	waitmessage
+LilycoveCity_EventScript_BerryVendorMenu::
+	dynmultipush LilycoveCity_Text_BerryTierCommon, 0
+	dynmultipush LilycoveCity_Text_BerryTierFlavor, 1
+	dynmultipush LilycoveCity_Text_BerryTierEV, 2
+	dynmultipush LilycoveCity_Text_BerryTierChilan, 3
+	dynmultipush LilycoveCity_Text_BerryTierEnigma, 4
+	dynmultipush LilycoveCity_Text_BerryTierCancel, 5
+	dynmultistack 0, 0, FALSE, 6, 0, 0, DYN_MULTICHOICE_CB_NONE
+	closemessage
+	switch VAR_RESULT
+	case 0, LilycoveCity_EventScript_BerryVendor_Tier1
+	case 1, LilycoveCity_EventScript_BerryVendor_Tier2
+	case 2, LilycoveCity_EventScript_BerryVendor_Tier3
+	case 3, LilycoveCity_EventScript_BerryVendor_Tier4
+	case 4, LilycoveCity_EventScript_BerryVendor_Tier5
+	goto LilycoveCity_EventScript_BerryVendor_Farewell
+
+LilycoveCity_EventScript_BerryVendor_Tier1::
+	pokemartpriced LilycoveCity_BerryVendor_Tier1_Items, LilycoveCity_BerryVendor_Tier1_Prices
+	goto LilycoveCity_EventScript_BerryVendorMenu
+
+LilycoveCity_EventScript_BerryVendor_Tier2::
+	pokemartpriced LilycoveCity_BerryVendor_Tier2_Items, LilycoveCity_BerryVendor_Tier2_Prices
+	goto LilycoveCity_EventScript_BerryVendorMenu
+
+LilycoveCity_EventScript_BerryVendor_Tier3::
+	pokemartpriced LilycoveCity_BerryVendor_Tier3_Items, LilycoveCity_BerryVendor_Tier3_Prices
+	goto LilycoveCity_EventScript_BerryVendorMenu
+
+LilycoveCity_EventScript_BerryVendor_Tier4::
+	pokemartpriced LilycoveCity_BerryVendor_Tier4_Items, LilycoveCity_BerryVendor_Tier4_Prices
+	goto LilycoveCity_EventScript_BerryVendorMenu
+
+LilycoveCity_EventScript_BerryVendor_Tier5::
+	pokemartpriced LilycoveCity_BerryVendor_Tier5_Items, LilycoveCity_BerryVendor_Tier5_Prices
+	goto LilycoveCity_EventScript_BerryVendorMenu
+
+LilycoveCity_EventScript_BerryVendor_Farewell::
+	msgbox LilycoveCity_Text_BerryVendorFarewell, MSGBOX_DEFAULT
+	release
+	end
+
+	.align 2
+LilycoveCity_BerryVendor_Tier1_Items:
+	.2byte ITEM_CHERI_BERRY
+	.2byte ITEM_CHESTO_BERRY
+	.2byte ITEM_PECHA_BERRY
+	.2byte ITEM_RAWST_BERRY
+	.2byte ITEM_ASPEAR_BERRY
+	.2byte ITEM_LEPPA_BERRY
+	.2byte ITEM_ORAN_BERRY
+	.2byte ITEM_PERSIM_BERRY
+	.2byte ITEM_LUM_BERRY
+	.2byte ITEM_SITRUS_BERRY
+	.2byte ITEM_NONE
+
+	.align 2
+LilycoveCity_BerryVendor_Tier1_Prices:
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+	.4byte 200
+
+	.align 2
+LilycoveCity_BerryVendor_Tier2_Items:
+	.2byte ITEM_FIGY_BERRY
+	.2byte ITEM_WIKI_BERRY
+	.2byte ITEM_MAGO_BERRY
+	.2byte ITEM_AGUAV_BERRY
+	.2byte ITEM_IAPAPA_BERRY
+	.2byte ITEM_RAZZ_BERRY
+	.2byte ITEM_BLUK_BERRY
+	.2byte ITEM_NANAB_BERRY
+	.2byte ITEM_WEPEAR_BERRY
+	.2byte ITEM_PINAP_BERRY
+	.2byte ITEM_NONE
+
+	.align 2
+LilycoveCity_BerryVendor_Tier2_Prices:
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+	.4byte 500
+
+	.align 2
+LilycoveCity_BerryVendor_Tier3_Items:
+	.2byte ITEM_POMEG_BERRY
+	.2byte ITEM_KELPSY_BERRY
+	.2byte ITEM_QUALOT_BERRY
+	.2byte ITEM_HONDEW_BERRY
+	.2byte ITEM_GREPA_BERRY
+	.2byte ITEM_TAMATO_BERRY
+	.2byte ITEM_CORNN_BERRY
+	.2byte ITEM_MAGOST_BERRY
+	.2byte ITEM_RABUTA_BERRY
+	.2byte ITEM_NOMEL_BERRY
+	.2byte ITEM_SPELON_BERRY
+	.2byte ITEM_PAMTRE_BERRY
+	.2byte ITEM_WATMEL_BERRY
+	.2byte ITEM_DURIN_BERRY
+	.2byte ITEM_BELUE_BERRY
+	.2byte ITEM_NONE
+
+	.align 2
+LilycoveCity_BerryVendor_Tier3_Prices:
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+	.4byte 1000
+
+	.align 2
+LilycoveCity_BerryVendor_Tier4_Items:
+	.2byte ITEM_CHILAN_BERRY
+	.2byte ITEM_NONE
+
+	.align 2
+LilycoveCity_BerryVendor_Tier4_Prices:
+	.4byte 10000
+
+	.align 2
+LilycoveCity_BerryVendor_Tier5_Items:
+	.2byte ITEM_ENIGMA_BERRY
+	.2byte ITEM_NONE
+
+	.align 2
+LilycoveCity_BerryVendor_Tier5_Prices:
+	.4byte 20000
+
+LilycoveCity_Text_BerryVendorGreeting:
+	.string "Welcome, CHAMPION!\p"
+	.string "I sell only the rarest and finest\n"
+	.string "BERRIES in all of HOENN.\p"
+	.string "Which selection would you like\n"
+	.string "to see?$"
+
+LilycoveCity_Text_BerryVendorFarewell:
+	.string "Come back any time, CHAMPION!$"
+
+LilycoveCity_Text_BerryTierCommon:
+	.string "Common ($200)$"
+
+LilycoveCity_Text_BerryTierFlavor:
+	.string "Flavor ($500)$"
+
+LilycoveCity_Text_BerryTierEV:
+	.string "EV/Pokéblock ($1000)$"
+
+LilycoveCity_Text_BerryTierChilan:
+	.string "CHILAN ($10000)$"
+
+LilycoveCity_Text_BerryTierEnigma:
+	.string "ENIGMA ($20000)$"
+
+LilycoveCity_Text_BerryTierCancel:
+	.string "Leave$"

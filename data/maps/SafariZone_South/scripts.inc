@@ -148,3 +148,13 @@ SafariZone_Northeast_EventScript_Woman::
 SafariZone_Northeast_EventScript_Girl::
 	msgbox SafariZone_Northeast_Text_Girl, MSGBOX_NPC
 	end
+
+@ Mod: Warp pad linking Emerald Safari Zone Northeast to FRLG Safari Zone Center Area.
+SafariZone_Northeast_EventScript_WarpPadToKanto::
+	lockall
+	playse SE_WARP_IN
+	waitse
+	warp MAP_SAFARI_ZONE_CENTER, 26, 15
+	waitstate
+	releaseall
+	end

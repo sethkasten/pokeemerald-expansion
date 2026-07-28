@@ -177,6 +177,13 @@
       "elevation": 3,
       "dest_map": "MAP_TWO_ISLAND_HARBOR",
       "dest_warp_id": "0"
+    },
+    {
+      "x": 44,
+      "y": 18,
+      "elevation": 0,
+      "dest_map": "MAP_VICTORY_ROAD_1F_FRLG",
+      "dest_warp_id": "1"
     }
   ],
   "coord_events": [

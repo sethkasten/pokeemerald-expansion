@@ -53,8 +53,8 @@ PokemonLeague_BrunosRoom_EventScript_Bruno::
 	call_if_set FLAG_SYS_GAME_CLEAR, PokemonLeague_BrunosRoom_EventScript_RematchIntro
 	setflag FLAG_TEMP_3
 	setflag FLAG_TEMP_5
-	call_if_unset FLAG_IS_CHAMPION, PokemonLeague_BrunosRoom_EventScript_Battle
-	call_if_set FLAG_IS_CHAMPION, PokemonLeague_BrunosRoom_EventScript_Rematch
+	call_if_unset FLAG_DEFEATED_CHAMP, PokemonLeague_BrunosRoom_EventScript_Battle
+	call_if_set FLAG_DEFEATED_CHAMP, PokemonLeague_BrunosRoom_EventScript_Rematch
 	clearflag FLAG_TEMP_5
 	goto PokemonLeague_BrunosRoom_EventScript_DefeatedBruno
 	end

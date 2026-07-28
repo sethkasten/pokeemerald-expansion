@@ -142,3 +142,58 @@ RustboroCity_DevonCorp_1F_Text_ProductDisplay:
 	.string "tools for POKéMON TRAINERS, including\l"
 	.string "POKé BALLS and POKéNAV systems.”$"
 
+@ Mod: Porygon vendor. Sells one Porygon for $1000, sent straight to the PC.
+RustboroCity_DevonCorp_1F_EventScript_PorygonVendor::
+	lock
+	faceplayer
+	goto_if_set FLAG_PURCHASED_DEVON_PORYGON, RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_AlreadyBought
+	msgbox RustboroCity_DevonCorp_1F_Text_PorygonVendor_Offer, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_Decline
+	checkmoney 1000
+	goto_if_eq VAR_RESULT, FALSE, RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_NotEnoughMoney
+	removemoney 1000
+	playfanfare MUS_OBTAIN_ITEM
+	waitfanfare
+	setvar VAR_0x8004, SPECIES_PORYGON
+	setvar VAR_0x8005, 15
+	special ScriptGiveMonToPC
+	setflag FLAG_PURCHASED_DEVON_PORYGON
+	msgbox RustboroCity_DevonCorp_1F_Text_PorygonVendor_Congrats, MSGBOX_DEFAULT
+	release
+	end
+
+RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_Decline::
+	msgbox RustboroCity_DevonCorp_1F_Text_PorygonVendor_NeverWarned, MSGBOX_DEFAULT
+	release
+	end
+
+RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_NotEnoughMoney::
+	msgbox RustboroCity_DevonCorp_1F_Text_PorygonVendor_NotEnoughMoney, MSGBOX_DEFAULT
+	release
+	end
+
+RustboroCity_DevonCorp_1F_EventScript_PorygonVendor_AlreadyBought::
+	msgbox RustboroCity_DevonCorp_1F_Text_PorygonVendor_AlreadyBought, MSGBOX_DEFAULT
+	release
+	end
+
+RustboroCity_DevonCorp_1F_Text_PorygonVendor_Offer:
+	.string "I'll sell you virus protection\n"
+	.string "software for your PC for only\l"
+	.string "¥1000! What do you say?$"
+
+RustboroCity_DevonCorp_1F_Text_PorygonVendor_Congrats:
+	.string "Congratulations!\n"
+	.string "Check your PC!$"
+
+RustboroCity_DevonCorp_1F_Text_PorygonVendor_NeverWarned:
+	.string "Never say I didn't warn you!$"
+
+RustboroCity_DevonCorp_1F_Text_PorygonVendor_NotEnoughMoney:
+	.string "You'll need at least ¥1000 to\n"
+	.string "purchase a license.$"
+
+RustboroCity_DevonCorp_1F_Text_PorygonVendor_AlreadyBought:
+	.string "Your PC is already fully protected.\n"
+	.string "Enjoy your new digital friend!$"
+
