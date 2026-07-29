@@ -149,12 +149,30 @@ SafariZone_Northeast_EventScript_Girl::
 	msgbox SafariZone_Northeast_Text_Girl, MSGBOX_NPC
 	end
 
-@ Mod: Warp pad linking Emerald Safari Zone Northeast to FRLG Safari Zone Center Area.
-SafariZone_Northeast_EventScript_WarpPadToKanto::
-	lockall
+@ Mod: Warp attendant linking Emerald Safari Zone Northeast to FRLG Safari Zone Center Area.
+SafariZone_Northeast_EventScript_WarpAttendantToKanto::
+	lock
+	faceplayer
+	msgbox SafariZone_Northeast_Text_WarpAttendantOffer, MSGBOX_YESNO
+	goto_if_eq VAR_RESULT, NO, SafariZone_Northeast_EventScript_WarpAttendantDecline
+	closemessage
 	playse SE_WARP_IN
 	waitse
 	warp MAP_SAFARI_ZONE_CENTER, 26, 15
 	waitstate
-	releaseall
+	release
 	end
+
+SafariZone_Northeast_EventScript_WarpAttendantDecline::
+	msgbox SafariZone_Northeast_Text_WarpAttendantDecline, MSGBOX_DEFAULT
+	release
+	end
+
+SafariZone_Northeast_Text_WarpAttendantOffer:
+	.string "A shortcut leads from here to the\n"
+	.string "KANTO SAFARI ZONE.\p"
+	.string "Would you like to take it?$"
+
+SafariZone_Northeast_Text_WarpAttendantDecline:
+	.string "Come back anytime you'd like to\n"
+	.string "explore KANTO.$"

@@ -3,6 +3,7 @@
   "name": "SafariZone_Northeast",
   "layout": "LAYOUT_SAFARI_ZONE_NORTHEAST",
   "music": "MUS_SAFARI_ZONE",
+  "region": "REGION_HOENN",
   "region_map_section": "MAPSEC_SAFARI_ZONE",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
@@ -141,20 +142,23 @@
       "trainer_sight_or_berry_tree_id": "ITEM_NUGGET",
       "script": "Common_EventScript_FindItem",
       "flag": "FLAG_ITEM_SAFARI_ZONE_NORTH_EAST_NUGGET"
+    },
+    {
+      "graphics_id": "OBJ_EVENT_GFX_MAN_5",
+      "x": 32,
+      "y": 11,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_DOWN",
+      "movement_range_x": 1,
+      "movement_range_y": 1,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "SafariZone_Northeast_EventScript_WarpAttendantToKanto",
+      "flag": "0"
     }
   ],
   "warp_events": [],
-  "coord_events": [
-    {
-      "type": "trigger",
-      "x": 32,
-      "y": 22,
-      "elevation": 3,
-      "var": "VAR_TEMP_0",
-      "var_value": "0",
-      "script": "SafariZone_Northeast_EventScript_WarpPadToKanto"
-    }
-  ],
+  "coord_events": [],
   "bg_events": [
     {
       "type": "hidden_item",
@@ -172,6 +176,5 @@
       "item": "ITEM_ZINC",
       "flag": "FLAG_HIDDEN_ITEM_SAFARI_ZONE_NORTH_EAST_ZINC"
     }
-  ],
-  "region": "REGION_HOENN"
+  ]
 }

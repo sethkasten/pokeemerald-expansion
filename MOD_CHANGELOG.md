@@ -236,18 +236,18 @@ Files changed:
 - Rationale: gives players a way to reach Kanto's Cerulean Cave from Hoenn once they've cleared Route 103's water, and forces the return trip through the same tile. This keeps the FRLG Cerulean City overworld (and everything it connects to) firmly out of reach.
 - **Note:** The Altering Cave (8, 2) metatile must be set to a warp behavior (stair/hole/door) via Porymap for that end to trigger on step; the Cerulean Cave (33, 21) end already has a stair-tile behavior from vanilla FRLG.
 
-### Safari Zone Northeast ↔ FRLG Safari Center — warp pad
-Adds a hidden step-triggered warp pad in the Emerald Safari Zone Northeast (Area 6) at tile **(32, 22)** — one tile east of the girl trainer. Stepping on it plays `SE_WARP_IN` and warps the player to **Center Area (hub)** of the FRLG Safari Zone at (26, 15).
+### Safari Zone Northeast ↔ FRLG Safari Center — warp attendant
+Adds an NPC warp attendant (`OBJ_EVENT_GFX_MAN_5`) in the Emerald Safari Zone Northeast (Area 6) at tile **(32, 11)**. Interacting with him prompts a YES/NO confirmation; on YES, `SE_WARP_IN` plays and the player is warped to **Center Area (hub)** of the FRLG Safari Zone at (26, 15).
 
 A matching return pad is placed on the FRLG Safari Zone Center hub at tile **(26, 17)** — just north of the Fuchsia City exit warps — which warps the player back to Safari Zone Northeast at (32, 24). Player arrival tiles are offset from the outbound pads so the trip is not accidentally re-triggered.
 
 Files changed:
-- [data/maps/SafariZone_Northeast/map.json](data/maps/SafariZone_Northeast/map.json) — added `coord_events` trigger at (32, 22) invoking `SafariZone_Northeast_EventScript_WarpPadToKanto`.
-- [data/maps/SafariZone_South/scripts.inc](data/maps/SafariZone_South/scripts.inc) — added `SafariZone_Northeast_EventScript_WarpPadToKanto` (Northeast's scripts live in South's `.inc` file).
+- [data/maps/SafariZone_Northeast/map.json](data/maps/SafariZone_Northeast/map.json) — added `object_event` at (32, 11) invoking `SafariZone_Northeast_EventScript_WarpAttendantToKanto`. Removed the previous step-triggered `coord_events` pad at (32, 22).
+- [data/maps/SafariZone_South/scripts.inc](data/maps/SafariZone_South/scripts.inc) — added `SafariZone_Northeast_EventScript_WarpAttendantToKanto` with YES/NO confirmation, decline branch, and two new text strings (Northeast's scripts live in South's `.inc` file).
 - [data/maps/SafariZone_Center_Frlg/map.json](data/maps/SafariZone_Center_Frlg/map.json) — added `coord_events` trigger at (26, 17) invoking `SafariZone_Center_EventScript_WarpPadToHoenn`.
 - [data/maps/SafariZone_Center_Frlg/scripts.inc](data/maps/SafariZone_Center_Frlg/scripts.inc) — added `SafariZone_Center_EventScript_WarpPadToHoenn`.
 
-Both scripts use the standard `lockall` / `playse SE_WARP_IN` / `waitse` / `warp` / `waitstate` / `releaseall` idiom, so the transition uses the normal screen-fade animation.
+The outbound direction uses interact-to-warp (`lock`/`faceplayer`/YES-NO/`playse SE_WARP_IN`/`warp`). The return direction still uses the standard `lockall` / `playse SE_WARP_IN` / `waitse` / `warp` / `waitstate` / `releaseall` step-triggered idiom.
 
 ### FRLG Safari Zone Center — Rest House exit redirected
 Entering the Rest House door on FRLG Safari Zone Center previously exited the player back into the FRLG hub, trapping them in Kanto maps. All three Rest House exit warps now redirect to `MAP_ROUTE121_SAFARI_ZONE_ENTRANCE` (the Emerald Safari Zone entrance building), giving the player a controlled route back to Hoenn. A new interior warp landing tile was added to the entrance building at (14, 12), just above the Route 121 exit doormat.
