@@ -56,6 +56,19 @@ Either counter hitting zero fires the existing `SafariZone_EventScript_TimesUp`,
 - [include/safari_zone.h](include/safari_zone.h) — exported `gSafariZoneStepCounterKanto`.
 - [src/safari_zone.c](src/safari_zone.c) — added the new counter; `EnterSafariMode` initializes both unconditionally; `SafariZoneTakeStep` routes the tick by region; `ExitSafariMode` zeros both. Added `#include "constants/region_map_sections.h"`.
 
+### FRLG layouts & tilesets compiled into the Emerald build
+Vanilla `pokeemerald-expansion` conditionally compiles FRLG map layouts and tilesets out of the Emerald build via a `layout_version: "frlg"` filter in the mapjson tool and `#if IS_FRLG` guards over every FRLG tileset struct/tile/palette/metatile blob. In this mod, many overworld connections and warps (Two Island, Victory Road, Cerulean Cave, Rock Tunnel, Diglett's Cave, Cerulean Cave, Mt. Moon, and every FRLG Safari sub-map) send the player into FRLG-only maps. Under the vanilla setup, every one of those destinations resolves to `NULL` in `gMapLayouts`, `GetMapLayout()` returns `NULL`, and `LoadCurrentMapData` deref-crashes to open-bus (typical symptom: "Jumped to invalid address: BAFFFFA"). The Safari Zone Northeast attendant warp to `MAP_SAFARI_ZONE_CENTER` triggered this on the first outbound trip.
+
+Fix: FRLG layouts, tileset structs, tile graphics, palettes, and metatile blobs now compile alongside the Emerald ones in every build, and the mapjson generator always emits the real layout symbol into `gMapLayouts` (never `NULL`). ROM footprint grows from ~79% to ~82% of 32 MB; still comfortably under the cart limit.
+
+- [tools/mapjson/mapjson.cpp](tools/mapjson/mapjson.cpp) — in `generate_layouts_text`, removed the `if (version-mismatch) continue;` filter so FRLG layouts always emit their `<name>_Border`, `<name>_Blockdata`, and `<name>_Layout` symbols in the Emerald build. In `generate_layouts_table_text`, removed the `NULL`-emit branch so `layouts_table.inc` always references the real layout symbol.
+- [src/data/tilesets/headers.h](src/data/tilesets/headers.h) — removed the `#if !IS_FRLG` / `#else` / `#endif // IS_FRLG` fence around the Emerald and FRLG `struct Tileset` blocks. Both sets now define side-by-side (no symbol collisions; verified). Includes `gTileset_General_Frlg` (with `.callback = InitTilesetAnim_General_Frlg`), `gTileset_BuildingFrlg`, `gTileset_FuchsiaCity`, `gTileset_SafariZoneBuilding`, all Kanto route/city/interior tilesets, `gTileset_PokemonLeague` (FRLG variant), `gTileset_HallOfFame` (FRLG variant), etc.
+- [src/data/tilesets/metatiles.h](src/data/tilesets/metatiles.h) — same fence removal for the `INCBIN_U16` metatile / metatile-attribute arrays (`gMetatiles_Building_Frlg`, `gMetatiles_General_Frlg`, `gMetatiles_SafariZoneBuilding`, and all Kanto secondaries).
+- [src/data/tilesets/graphics.h](src/data/tilesets/graphics.h) — removed the `#if IS_FRLG` / `#endif` guard so `gTilesetTiles_General_Frlg`, `gTilesetPalettes_General_Frlg`, `gTilesetTiles_Building_Frlg`, `gTilesetTiles_SafariZoneBuilding`, and every FRLG palette/tile blob link into the Emerald ROM.
+- [src/tileset_anims.c](src/tileset_anims.c) — no changes needed; FRLG anim callbacks (e.g. `InitTilesetAnim_General_Frlg`) are already defined unconditionally.
+
+Verified with a full rebuild: no undefined references, no duplicate symbols, ROM at 81.91% of 32 MB (EWRAM 86.43%, IWRAM 86.60%). All 344 FRLG-only layouts now resolve to real pointers in `gMapLayouts`, unblocking every FRLG destination the mod wires up.
+
 ---
 
 ## Scripts & Sidequests

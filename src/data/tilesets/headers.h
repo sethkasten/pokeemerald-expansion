@@ -28,7 +28,7 @@ const struct Tileset gTileset_SecretBaseRedCave =
 const struct Tileset *const gTilesetPointer_SecretBase = &gTileset_SecretBase;
 const struct Tileset *const gTilesetPointer_SecretBaseRedCave = &gTileset_SecretBaseRedCave;
 
-#if !IS_FRLG
+// Mod: Emerald tilesets always compile (was #if !IS_FRLG). Kept as a comment for provenance.
 
 const struct Tileset gTileset_General =
 {
@@ -833,7 +833,7 @@ const struct Tileset gTileset_UnionRoom =
     .callback = NULL,
 };
 
-#else
+// Mod: FRLG tilesets compile alongside Emerald ones (was #else / IS_FRLG-only).
 
 // FRLG tilesets
 const struct Tileset gTileset_BuildingFrlg =
@@ -1540,4 +1540,4 @@ const struct Tileset gTileset_HallOfFame =
     .callback = NULL,
 };
 
-#endif // IS_FRLG
+// Mod: closing #endif for the removed IS_FRLG guard.

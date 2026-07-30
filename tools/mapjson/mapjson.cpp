@@ -780,9 +780,9 @@ string generate_layout_headers_text(Json layouts_data) {
             else if (version == "firered")
                 layout_version = "frlg";
         }
-        if ((version == "emerald" && layout_version != "emerald")
-         || (version == "firered" && layout_version != "frlg"))
-            continue;
+        // Mod: always emit every layout regardless of the build target's version.
+        // The FRLG layouts / tilesets are compiled unconditionally too, so both
+        // Emerald and FRLG maps can be entered from either build.
         string layoutName = json_to_string(layout, "name");
         string border_label = layoutName + "_Border";
         string blockdata_label = layoutName + "_Blockdata";
@@ -838,13 +838,12 @@ string generate_layouts_table_text(Json layouts_data) {
             else if (version == "firered")
                 layout_version = "frlg";
         }
-        if ((version == "emerald" && layout_version != "emerald") || (version == "firered" && layout_version != "frlg")) {
-            text << "\t.4byte NULL\n";
-        } else {
-            string layout_name = json_to_string(layout, "name", true);
-            if (layout_name.empty()) layout_name = "NULL";
-            text << "\t.4byte " << layout_name << "\n";
-        }
+        // Mod: always emit the real layout symbol regardless of build target's
+        // version. Combined with the ungated FRLG tilesets, this makes every
+        // FRLG map reachable from an Emerald build without NULL layout crashes.
+        string layout_name = json_to_string(layout, "name", true);
+        if (layout_name.empty()) layout_name = "NULL";
+        text << "\t.4byte " << layout_name << "\n";
     }
 
     return text.str();
