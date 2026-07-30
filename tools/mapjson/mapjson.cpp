@@ -740,10 +740,12 @@ void process_groups(string groups_filepath, vector<string> &map_filepaths, strin
         }
         string map_name = json_to_string(map_data, "name");
 
-        if ((version == "emerald" && region != "REGION_HOENN")
-         || (version == "firered" && region != "REGION_KANTO")) {
-            invalid_maps.push_back(map_name);
-        }
+        // Mod: always emit every map regardless of the build target's version.
+        // FRLG maps must be reachable from Emerald builds (Safari Zone Kanto warp, etc.),
+        // so we deliberately do NOT push non-matching-region maps into invalid_maps.
+        // The layouts / tilesets are compiled unconditionally elsewhere.
+        (void)region;
+        (void)map_name;
     }
 
     if (groups_data == Json())

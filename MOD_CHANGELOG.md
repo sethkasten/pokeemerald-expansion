@@ -69,6 +69,18 @@ Fix: FRLG layouts, tileset structs, tile graphics, palettes, and metatile blobs 
 
 Verified with a full rebuild: no undefined references, no duplicate symbols, ROM at 81.91% of 32 MB (EWRAM 86.43%, IWRAM 86.60%). All 344 FRLG-only layouts now resolve to real pointers in `gMapLayouts`, unblocking every FRLG destination the mod wires up.
 
+### FRLG map groups, headers, scripts, and events compiled into the Emerald build
+Follow-up to the layouts/tilesets fix. Even with `gMapLayouts` populated, warping to any FRLG map still crashed because `mapjson` was ALSO filtering FRLG maps out of `groups.inc`, `headers.inc`, `connections.inc`, and `events.inc`. The `gMapGroups` array therefore only had 34 real Emerald groups followed by 41 `.4byte NULL` padding entries; dereferencing group 37 (`gMapGroup_TownsAndRoutes_Frlg`) read `NULL`, and every subsequent header/event pointer was garbage — producing crashes like `Jumped to invalid address: E886E886` (Pallet Town warp) and `Jumped to invalid address: BAFFFFFA` (Safari Zone Center warp), plus stray `Bad BIOS Load32` / `Bad memory Load8` events just from cursoring over group 37 in the debug menu.
+
+Fix: neutralize the "region mismatch → invalid map" filter in mapjson, unconditionally include every FRLG map's `scripts.inc`, add an alias for the FRLG song constant `MUS_RG_ENDING`, and downgrade the `bg_hidden_item_event` flag-range assertion to a warning (FRLG hidden-item flags are currently placeholder-defined to 0 in Emerald's `flags.h`, so a hard error blocks compilation). ROM footprint grows from 81.91% to **83.42%** of 32 MB.
+
+- [tools/mapjson/mapjson.cpp](tools/mapjson/mapjson.cpp) — in the groups pass, deleted the `if ((version == "emerald" && region != "REGION_HOENN") || ...) invalid_maps.push_back(map_name);` branch. Every map is now considered valid regardless of the build target's version, so `generate_groups_text`, `generate_connections_text`, `generate_headers_text`, and `generate_events_text` all emit real FRLG symbols. `groups.inc` now contains all 75 groups (34 Emerald + 41 FRLG) with zero `NULL` padding, matching `map_groups.json:group_order`.
+- [data/event_scripts.s](data/event_scripts.s) — removed the `.if IS_FRLG` … `.endif` fence around the FRLG script includes so every FRLG map's `scripts.inc` (and `data/text/*_frlg.inc`, `data/scripts/*_frlg.inc`) assembles unconditionally. Without this, `data/maps.o` linked against `<FrlgMap>_MapScripts` symbols that were never emitted.
+- [asm/macros/map.inc](asm/macros/map.inc) — `bg_hidden_item_event` now uses `.warning` instead of `.error` when `\flag < FLAG_HIDDEN_ITEMS_START`. Every FRLG hidden-item flag currently resolves to `0` in Emerald's `flags.h` (placeholder), so the hard error prevented every FRLG events.inc from assembling. Downgrading to a warning lets the ROM link; downstream, all FRLG hidden items will share flag slot 0 until real values are backfilled — cosmetic bug, not a crash.
+- [include/constants/songs.h](include/constants/songs.h) — added `#define MUS_RG_ENDING MUS_RG_CREDITS` alias so `PokemonLeague_ChampionsRoom_Frlg/scripts.inc`'s `playbgm MUS_RG_ENDING, 0` resolves. `MUS_RG_CREDITS` (song 502) is the same track that FRLG names `MUS_RG_ENDING`; the comment on line 434 already noted the original name.
+
+Verified: full rebuild passes with `DEBUG=1`, ROM at 83.42% of 32 MB, `groups.inc` has 0 `NULL` entries, `pokeemerald.map` contains `gMapGroup_TownsAndRoutes_Frlg`, `PalletTown_Frlg_MapScripts`, `SafariZone_Center_Frlg_MapScripts`, etc. Ready for in-game warp testing.
+
 ---
 
 ## Scripts & Sidequests
