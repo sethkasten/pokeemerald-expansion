@@ -151,7 +151,20 @@ string generate_map_header_text(Json map_data, Json layouts_data) {
     else
         text << "\t.4byte " << mapName << "_MapEvents\n";
 
-    if (map_data.object_items().find("shared_scripts_map") != map_data.object_items().end())
+    // Mod: Neutralize FRLG map scripts when compiling into an Emerald build. The FRLG
+    // OnTransition/OnFrame/OnLoad handlers reference FLAG_*/VAR_* symbols that resolve to
+    // 0 or to Emerald story-vars/flags in this build, which causes them to fire spuriously
+    // (e.g. Six Island Poke Center rival cutscene, Pallet Town Oak rating scene) and hang
+    // on applymovement/waitmovement of NPCs that were never spawned. Point map_scripts at
+    // NULL for FRLG maps so those handlers can never run. The named _MapScripts labels
+    // and their referenced EventScripts still compile (object/coord events still call
+    // them), just the map header no longer references the top-level table.
+    bool is_frlg_map = mapName.size() > 5
+                    && mapName.compare(mapName.size() - 5, 5, "_Frlg") == 0;
+    if (is_frlg_map) {
+        text << "\t.4byte NULL\n";
+    }
+    else if (map_data.object_items().find("shared_scripts_map") != map_data.object_items().end())
         text << "\t.4byte " << json_to_string(map_data, "shared_scripts_map") << "_MapScripts\n";
     else
         text << "\t.4byte " << mapName << "_MapScripts\n";

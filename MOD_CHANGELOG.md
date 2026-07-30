@@ -81,6 +81,19 @@ Fix: neutralize the "region mismatch → invalid map" filter in mapjson, uncondi
 
 Verified: full rebuild passes with `DEBUG=1`, ROM at 83.42% of 32 MB, `groups.inc` has 0 `NULL` entries, `pokeemerald.map` contains `gMapGroup_TownsAndRoutes_Frlg`, `PalletTown_Frlg_MapScripts`, `SafariZone_Center_Frlg_MapScripts`, etc. Ready for in-game warp testing.
 
+### FRLG map headers point `map_scripts` to `NULL` (Emerald build)
+Follow-up: after the previous fix, FRLG maps loaded and rendered correctly, but visits froze or crashed post-load. Pallet Town crashed a moment after the door-exit animation; Six Island Pokémon Center 1F froze immediately on entry; several other FRLG interiors hung on `waitmovement`. Root cause: FRLG `MAP_SCRIPT_ON_TRANSITION` / `MAP_SCRIPT_ON_FRAME_TABLE` handlers use `VAR_MAP_SCENE_*_FRLG` / `FLAG_*_FRLG` constants that share the 0x4000–0x40FF var slot and flag slot 0 with Emerald's own story vars/flags. Concretely:
+
+- `VAR_MAP_SCENE_PALLET_TOWN_OAK` = `0x4050` = `VAR_LITTLEROOT_TOWN_STATE`. The intro sets `VAR_LITTLEROOT_TOWN_STATE = 2`, which incidentally matches `map_script_2 VAR_MAP_SCENE_PALLET_TOWN_OAK, 2, PalletTown_EventScript_OakRatingScene` — so entering Pallet Town auto-fires the Oak Rating Scene, which `addobject`/`applymovement`s `LOCALID_PALLET_PROF_OAK` (an FRLG local ID with no matching object template in this build) then `waitmovement 0`s forever.
+- `VAR_MAP_SCENE_SIX_ISLAND_POKEMON_CENTER_1F` is 0 on any fresh save, which matches `map_script_2 VAR_MAP_SCENE_SIX_ISLAND_POKEMON_CENTER_1F, 0, ...RivalScene` — same infinite-wait pattern on `LOCALID_SIX_ISLAND_RIVAL`.
+- Same class of collision blocks every FRLG map that had an `OnTransition`/`OnFrame` referencing FRLG-only vars, flags, local IDs, or scripted NPCs.
+
+Fix: point the map header's `map_scripts` slot at `NULL` for every FRLG map so the whole `_MapScripts` table (and its `ON_TRANSITION` / `ON_RESUME` / `ON_LOAD` / `ON_FRAME_TABLE` handlers) is unreachable from the map header. Object-event scripts and coord-event scripts are unaffected — the per-event `.4byte <script>` pointers in `events.inc` still reference the same `PalletTown_EventScript_*` / `SixIsland_PokemonCenter_1F_EventScript_*` labels in the map's `scripts.inc`, which continue to compile normally. This is a pure connective-tissue change: FRLG maps still render, are still walkable, still interact with NPCs and warps, they just don't run FRLG story cutscenes.
+
+- [tools/mapjson/mapjson.cpp](tools/mapjson/mapjson.cpp) — in `generate_map_header_text`, when `mapName` ends in `_Frlg`, emit `.4byte NULL` for the map-scripts slot instead of `.4byte <mapName>_MapScripts`. Non-FRLG (Emerald) maps still emit the real symbol.
+
+Verified: full rebuild passes with `DEBUG=1`, ROM footprint unchanged at 83.42% of 32 MB, and every regenerated `data/maps/*_Frlg/header.inc` shows `.4byte NULL` in the third header slot (control: `data/maps/LittlerootTown/header.inc` still shows `.4byte LittlerootTown_MapScripts`).
+
 ---
 
 ## Scripts & Sidequests
